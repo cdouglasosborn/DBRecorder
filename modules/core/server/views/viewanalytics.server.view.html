@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+  <base href="/">
+  <title>{{title}}</title>
+  <meta name="description" content="{{description}}">
+  <meta name="fragment" content="!">
+
+  <!-- Apple META -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <!-- Facebook META -->
+  <meta property="fb:app_id" content="{{facebookAppId}}">
+  <meta property="og:site_name" content="{{title}}">
+  <meta property="og:title" content="{{title}}">
+  <meta property="og:description" content="{{description}}">
+  <meta property="og:url" content="{{url}}">
+  <meta property="og:image" content="{{logo}}">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter META -->
+  <meta name="twitter:title" content="{{title}}">
+  <meta name="twitter:description" content="{{description}}">
+  <meta name="twitter:url" content="{{url}}">
+  <meta name="twitter:image" content="{{logo}}">
+
+  <!-- Fav Icon -->
+  <link href="{{favicon}}" rel="shortcut icon" type="image/x-icon">
+
+  <!-- Application CSS Files -->
+  {% for cssFile in cssFiles %}<link rel="stylesheet" href="{{cssFile}}">{% endfor %}
+</head>
+
+<body class="ng-cloak">
+  <header ng-include="'/modules/core/client/views/header.client.view.html'" class="navbar navbar-fixed-top navbar-inverse"></header>
+  <section class="content">
+    <section class="container">
+    <br>
+      <h4> Current Result </h4>
+
+      <div id="currentLevel"></div>
+
+      <div id="loading"><i> Please wait... loading </i> </div>
+
+      <h4> Last 30 seconds Graph </h4>
+
+      <canvas id="myChart" width="400" height="400"></canvas>
+
+      <h4> Last 30 minutes Graph </h4>
+
+      <canvas id="myMinuteChart" width="400" height="400"></canvas>
+
+    </section>
+  </section>
+
+  <!--Embedding The User Object-->
+  <script type="text/javascript">
+    var user = {{ user | json | safe }};
+  </script>
+
+  <!--Load The Socket.io File-->
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
+  <!-- ChartJS script -->
+  <script type="text/javascript" src="lib/charts/Chart.min.js"></script>
+
+  <!-- jQuery script -->
+  <script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>
+
+  <!--Application JavaScript Files-->
+  {% for jsFile in jsFiles %}<script type="text/javascript" src="{{jsFile}}"></script>{% endfor %}
+
+  <script>
+
+   var socket = io();
+   var previousResults = [];
+   var lastResult = 0;
+   var numberOfResults = 0;
+   var data = {
+    labels: [],
+    datasets: [
+    {
+      label: 'Decibels',
+      data: []
+    }]
+   };
+
+   console.log(socket);
+   socket.on('newResult', function(msg) {
+    var level = document.getElementById('currentLevel');
+    level.innerHTML = msg + ' Db';
+    if(msg > lastResult) {
+      lastResult = msg;
+    }
+   });
+
+
+
+   var addDataSets = function() {
+    //console.log('Message: ' + msg);
+    var currentdate = new Date();
+    var datetime = currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/"
+                + currentdate.getFullYear() + " @ "
+                + currentdate.getHours() + ":"
+                + currentdate.getMinutes() + ":"
+                + currentdate.getSeconds();
+    //data.labels.push(datetime);
+    //data.datasets[0].data.push(lastResult);
+    myNewChart.addData([lastResult], datetime);
+    numberOfResults++;
+    myNewChart.update();
+    if(numberOfResults > 10) {
+      myNewChart.removeData();
+      numberOfResults--;
+    }
+    lastResult = 0;
+   };
+
+   setInterval(addDataSets, 5000);
+
+   var ctx = document.getElementById("myChart").getContext("2d");
+   var myNewChart = new Chart(ctx).Line(data);
+
+   $.ajax({
+    url: 'api/datapoints',
+  }).done(function(data) {
+    console.log(data);
+    document.getElementById("loading").style.display = 'none';
+    //30 seconds
+    if(data.length > 10) {
+      var gottenLabels = [];
+      var gottenData = [];
+      for(var i = 0; i < 10; i++) {
+        gottenLabels.push(data[i].created);
+        gottenData.push(data[i].value);
+      }
+      var secondChartData = {
+        labels: gottenLabels,
+        datasets: [
+        {
+          label: 'Decibels',
+          data: gottenData
+        }]
+       };
+       //myNewChart = new Chart(ctx).Line(secondChartData);
+    }
+
+    //30 Minutes
+    var gottenLabels = [];
+    var gottenData = [];
+    var currentNumber = 0;
+    for(var i = 0; i < data.length; i++) {
+      if(data[i].value > currentNumber) {
+        currentNumber = data[i];
+      }
+      if(i % 50 === 0) {
+        gottenLabels.push(data[i].created);
+        gottenData.push(data[i].value);
+      }
+    }
+    var chartData = {
+    labels: gottenLabels,
+    datasets: [
+    {
+      label: 'Decibels',
+      data: gottenData
+    }]
+   };
+
+  var ctx = document.getElementById("myMinuteChart").getContext("2d");
+  var myNewChart = new Chart(ctx).Line(chartData);
+
+  });
+
+  </script>
+
+  {% if livereload %}
+  <!--Livereload script rendered -->
+  <script type="text/javascript" src="{{host}}:35729/livereload.js"></script>
+  {% endif %}
+</body>
+
+</html>
