@@ -6,6 +6,7 @@
 var path = require('path'),
   mongoose = require('mongoose'),
   DataPoint = mongoose.model('DataPoint'),
+  TMClient = require('textmagic-rest-client'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
 /**
@@ -26,3 +27,15 @@ exports.listSeconds = function (req, res) {
     }
   });
 };
+
+
+/**
+ * Test Text messaging
+ */
+ exports.testText = function(req, res) {
+  var c = new TMClient('charlesdouglasosborn', 'RidNGbhwVmgnU01p9YtnJegb0YA2qs');
+  var message = 'Generated Text Message from Decibel System';
+  c.Messages.send({text: message, phones:'16508617108'}, function(err, res){
+      console.log('Messages.send()', err, res);
+  });
+ };
