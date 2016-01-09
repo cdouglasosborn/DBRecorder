@@ -35,7 +35,7 @@
   {% for cssFile in cssFiles %}<link rel="stylesheet" href="{{cssFile}}">{% endfor %}
 </head>
 
-<body class="ng-cloak">
+<body>
   <header ng-include="'/modules/core/client/views/header.client.view.html'" class="navbar navbar-fixed-top navbar-inverse"></header>
   <section class="content">
     <section class="container">
@@ -57,7 +57,7 @@
   <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 
   <!-- Decibel script -->
-  <script type="text/javascript" src="lib/decibel-meter/decibel-meter.js"></script>
+  <script type="text/javascript" src="customlib/decibel-meter/decibel-meter.js"></script>
 
   <script>
       var meter = DecibelMeter.create('unique-id');
