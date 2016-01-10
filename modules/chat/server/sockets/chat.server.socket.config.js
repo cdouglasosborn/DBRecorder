@@ -32,25 +32,23 @@ module.exports = function (io, socket) {
   });
 
   var emitName = 'dbChange';
-   io.on('connection', function(socket){
-      socket.on(emitName, function(msg) {
-        console.log('message: ' + msg);
-        io.emit('newResult', msg);
+  io.on('connection', function(socket){
+    socket.on(emitName, function(msg) {
+      console.log('message: ' + msg);
+      io.emit('newResult', msg);
 
-        //Save the information to MongoDB
+      //Save the information to MongoDB
 
-        var datapoint = new DataPoint({value: msg});
-
-        datapoint.save(function (err) {
-          if (err) {
-            console.log('Error Did not save');
-          } else {
-            console.log('Saved Fine');
-          }
-        });
-
+      var datapoint = new DataPoint({ value: msg });
+      datapoint.save(function (err) {
+        if (err) {
+          console.log('Error Did not save');
+        } else {
+          console.log('Saved Fine');
+        }
       });
-   });
+    });
+  });
 
   // Emit the status event when a socket client is disconnected
   socket.on('disconnect', function () {
