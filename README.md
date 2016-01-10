@@ -1,3 +1,11 @@
+## DB Recorder
+
+App which shows decibel readings from a Chrome Browser (others may work) and allows realtime viewing in another browser (using sockets).
+
+Ot also records actions for later viewings.
+
+DB Recorder is built on the MEAN stack, see documentation below:
+
 [![MEAN.JS Logo](http://meanjs.org/img/logo-small.png)](http://meanjs.org/)
 
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/meanjs/mean?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
