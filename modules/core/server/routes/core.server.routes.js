@@ -17,6 +17,9 @@ module.exports = function (app) {
   app.route('/recorder').get(core.recorder);
 
   // Define application route
+  app.route('/').get(core.analytics);
+
+  // Define application route
   app.route('/*').get(core.renderIndex);
 
 };

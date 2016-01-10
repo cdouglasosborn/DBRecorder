@@ -75,10 +75,11 @@
 
     meter.on('ready', function (meter, sources) {
       audioSources = sources;
-      meter.connect(audioSources[1], connectCallback); // connect to first source, assumes meter is ready
+      console.log(sources);
+      meter.connect(audioSources[0], connectCallback); // connect to first source, assumes meter is ready
       meter.on('sample', function (dB, percent, value) {
         var actualDB = Number(dB.toFixed(1));
-        actualDB += 100;
+        actualDB += 110;
         if(lastNumber < actualDB) {
           lastNumber = actualDB;
         }
