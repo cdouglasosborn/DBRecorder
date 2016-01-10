@@ -42,8 +42,10 @@
     <br>
       <h4>Recorder </h4>
 
-      <div id="currentLevel"></div>
-
+      <div id="currentLevel"></div> <br>
+      <div id="currentLeveltwo"></div> <br>
+      <div id="currentLevelthree"></div><br>
+      <div id="currentLevelfour"></div>
       <div id="audioSources"></div>
     </section>
   </section>
@@ -60,7 +62,38 @@
   <script type="text/javascript" src="customlib/decibel-meter/decibel-meter.js"></script>
 
   <script>
-      var meter = DecibelMeter.create('unique-id');
+    var meter = DecibelMeter.create('unique-id');
+    var meterTwo = DecibelMeter.create('two');
+    var meterThree = DecibelMeter.create('three');
+    var meterFour = DecibelMeter.create('fpir');
+
+    meterTwo.on('ready', function(meterTwo, sources) {
+      meterTwo.connect(audioSources[0], function() {
+        meterTwo.listen();
+      });
+      meterTwo.on('sample', function(dB, percent, value) {
+        document.getElementById('currentLeveltwo').innerHTML = dB;
+      });
+    });
+
+    meterThree.on('ready', function(meterThree, sources) {
+      meterThree.connect(audioSources[1], function() {
+        meterThree.listen();
+      });
+      meterThree.on('sample', function(dB, percent, value) {
+        document.getElementById('currentLevelthree').innerHTML = dB;
+      });
+    });
+
+    meterFour.on('ready', function(meterFour, sources) {
+      meterFour.connect(audioSources[2], function() {
+        meterFour.listen();
+      });
+      meterFour.on('sample', function(dB, percent, value) {
+        document.getElementById('currentLevelthree').innerHTML = dB;
+      });
+    });
+
 
     var audioSources;
 
@@ -75,9 +108,8 @@
 
     meter.on('ready', function (meter, sources) {
       audioSources = sources;
-      console.log(sources);
-      console.log(audioSources[2]);
-      meter.connect(audioSources[2], connectCallback); // connect to first source, assumes meter is ready
+
+      meter.connect(audioSources[0], connectCallback); // connect to first source, assumes meter is ready
       meter.on('sample', function (dB, percent, value) {
         var actualDB = Number(dB.toFixed(1));
         actualDB += 110;
