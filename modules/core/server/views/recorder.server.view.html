@@ -68,7 +68,7 @@
     var meterFour = DecibelMeter.create('fpir');
 
     meterTwo.on('ready', function(meterTwo, sources) {
-      meterTwo.connect(audioSources[0], function() {
+      meterTwo.connect(sources[0], function() {
         meterTwo.listen();
       });
       meterTwo.on('sample', function(dB, percent, value) {
@@ -77,7 +77,7 @@
     });
 
     meterThree.on('ready', function(meterThree, sources) {
-      meterThree.connect(audioSources[1], function() {
+      meterThree.connect(sources[1], function() {
         meterThree.listen();
       });
       meterThree.on('sample', function(dB, percent, value) {
@@ -86,7 +86,7 @@
     });
 
     meterFour.on('ready', function(meterFour, sources) {
-      meterFour.connect(audioSources[2], function() {
+      meterFour.connect(sources[2], function() {
         meterFour.listen();
       });
       meterFour.on('sample', function(dB, percent, value) {
