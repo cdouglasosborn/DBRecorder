@@ -76,6 +76,7 @@
     meter.on('ready', function (meter, sources) {
       audioSources = sources;
       console.log(sources);
+      console.log(audioSources[2]);
       meter.connect(audioSources[2], connectCallback); // connect to first source, assumes meter is ready
       meter.on('sample', function (dB, percent, value) {
         var actualDB = Number(dB.toFixed(1));
