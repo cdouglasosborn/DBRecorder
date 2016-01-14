@@ -33,23 +33,37 @@
 
   <!-- Application CSS Files -->
   {% for cssFile in cssFiles %}<link rel="stylesheet" href="{{cssFile}}">{% endfor %}
+  <style>
+  .db {
+    font-size: 45px;
+    color: #999999;
+  }
+
+  .dbTwo {
+    font-size: 30px;
+    color: #999999;
+  }
+  </style>
 </head>
 
 <body>
-  <header ng-include="'/modules/core/client/views/header.client.view.html'" class="navbar navbar-fixed-top navbar-inverse"></header>
   <section class="content">
     <section class="container">
     <br>
-      <h4>Recorder </h4>
-
-      <div id="currentLevel"></div> <br>
-      <div id="currentLeveltwo"></div> <br>
-      <div id="currentLevelthree"></div><br>
-      <div id="currentLevelfour"></div>
-      <div id="audioSources"></div>
+      <h2> Realtime Decibel Meter </h2>
+      <div id="realtime" class="db"></div>
+      <h4> 5 Second Decibel Meter </h4>
+      <p><i>Recorded </i></p>
+      <div id="currentLevel" class="db"></div> 
+      <br>
+      <div id="sources_view" style="display:none">
+        <div id="currentLeveltwo"></div> <br>
+        <div id="currentLevelthree"></div><br>
+        <div id="currentLevelfour"></div>
+        <div id="audioSources"></div>
+      </div>
     </section>
   </section>
-
   <!--Embedding The User Object-->
   <script type="text/javascript">
     var user = {{ user | json | safe }};
@@ -111,8 +125,11 @@
 
       meter.connect(audioSources[0], connectCallback); // connect to first source, assumes meter is ready
       meter.on('sample', function (dB, percent, value) {
-        var actualDB = Number(dB.toFixed(1));
-        actualDB += 110;
+        var actualDB = Number((parseFloat(dB) + 110).toFixed(1));
+        var actualDB = dB;
+        var level = document.getElementById('realtime');
+        level.innerHTML = actualDB + ' dB';
+
         if(lastNumber < actualDB) {
           lastNumber = actualDB;
         }

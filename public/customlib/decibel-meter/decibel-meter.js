@@ -219,12 +219,42 @@ var DecibelMeter = ( function ( window, navigator, document, undefined ) {
 			
 			if (meter.listening && meter.handle.sample) {
 				
+
+				/*
 				meter.connection.analyser.getByteFrequencyData(meter.connection.lastSample);
 				
 				var value = meter.connection.lastSample[0],
 					percent = value / 255,
-					dB = meter.connection.analyser.minDecibels + ((meter.connection.analyser.maxDecibels - meter.connection.analyser.minDecibels) * percent);
+					dB = meter.connection.analyser.minDecibels
+						+ ((meter.connection.analyser.maxDecibels - meter.connection.analyser.minDecibels) * percent);
+
+				console.log(20 * Math.log10(
+					((meter.connection.analyser.maxDecibels - meter.connection.analyser.minDecibels) * percent) / meter.connection.analyser.minDecibels));
 				
+				*/
+
+				/* note that getFloatTimeDomainData will be available in the near future,
+			   * if needed. */
+
+			  meter.connection.analyser.getFloatFrequencyData(meter.connection.lastSample);
+			  console.log(meter.connection.lastSample);
+
+
+			  meter.connection.analyser.getByteTimeDomainData(meter.connection.lastSample);
+
+			  console.log(meter.connection.analyser.getFloatFrequencyData(meter.connection.lastSample));
+			  /* RMS stands for Root Mean Square, basically the root square of the
+			  * average of the square of each value. */
+			  var rms = 0;
+			  for (var i = 0; i < meter.connection.lastSample.length; i++) {
+			    rms += meter.connection.lastSample[i] * meter.connection.lastSample[i];
+			  }
+			  rms /= meter.connection.lastSample.length;
+			  rms = Math.sqrt(rms);
+
+			  var percent = 0;
+			  var value = 0;
+			  var dB = rms;
 				dispatch(meter, 'sample', [dB, percent, value]);
 			}
 			
